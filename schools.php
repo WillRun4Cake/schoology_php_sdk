@@ -1,6 +1,5 @@
 <?php
 require_once(dirname(__FILE__).'/SchoologyApi.class.php');
-// JWarner@swingtech.com
 Class Request
 {
 	function __construct()
@@ -204,143 +203,7 @@ Class Request
 		return false;
 	}
 }
-$email = isset($_REQUEST['email']) ? filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL) : null;
-if (isset($_REQUEST['singleuser']) && $_REQUEST['singleuser'] === 'true' && $email)
-{
-	$readonly = $email ? 'readonly' : '';
-	echo "<h4>User update page</h4><br/><br/><form method='POST' action='' id='begin'>
-		User email: <input type='text' id='email' name='email' value='$email' placeholder='$email' ".$readonly." />
-		<input type='hidden' id='singleuser' name='singleuser' value='true' /><br/>
-		<input type='submit' value='Null' /><br/>
-	</form>";
-	if ($email)
-	{
-		echo "<form id='resetForm' action='' method='POST'>
-				<input type='submit' id='reset' value='Reset' />
-			  </form>";
-	}
-	echo "<pre><code>";
-	print_r($_REQUEST);
-	echo "</code><pre>";
-	$api = new Request();
-	$email = $_REQUEST['email'];
-	try
-	{
-		$uidRequest = $api->getUserIdFromUniqueId($email);
-	} catch (Exception $e)
-	{
-		echo "<br/>That user was not found.";
-		exit();
-	}
-	if ($uidRequest)
-	{
-		echo "User id: $uidRequest<br/>";
-/*		echo "<pre><code>";
-		print_r(json_encode($uidRequest,JSON_PRETTY_PRINT));
-		echo "</code></pre>";  */
-	}
-	else
-	{
-		echo "User api request failed.";
-		exit();
-	}
-	/*	Make school update before populatidng the form fields.    */
-	if (isset($_REQUEST['updateready']) && $_REQUEST['updateready'] === 'true' &&
-		isset($_REQUEST['primary_school_string']) && 
-		isset($_REQUEST['additional_schools_string'])
-		)
-	{
-		$priSchool = $_REQUEST['primary_school_string'];
-		$addSchools = $_REQUEST['additional_schools_string'];
-		if(!preg_match('~[,[:blank:][:digit:]]+~', $priSchool) || !preg_match('~[,[:blank:][:digit:]]+~', $addSchools))
-		{
-			echo "<br/>The school codes entered must be comma-delimited numbers only.";
-			exit();
-		}
-		$user = (string) $api->uid;
-		$priSchoolUpdate = $api->assignPrimarySchoolBulk($priSchool, $user);
-		$additionalSchoolUpdates = $api->assignAdditionalSchoolsBulk($addSchools, $user);
-	}
-	$userReq = "users/$uidRequest";
-	$userInfo = $api->genericRequest($userReq);
-/*	echo "<br/>User info for $email:<br/>";
-	echo '<br/>Response:<br/><pre><code>';
-	print_r($userInfo);
-	echo '</code></pre><br/>';  */
-	$userPrimaryBldg = null;
-	$userAdditionalBldgs = null;
-	if (isset($userInfo->building_id) && isset($userInfo->additional_buildings))
-	{
-		$userPrimaryBldg = $userInfo->building_id;
-		$userAdditionalBldgs = $userInfo->additional_buildings;
-	}
-	echo "<form id='schoologyUpdateForm' action='' method='POST'>
-<input type='hidden' id='useremail' name='email' value='$email' />
-	Primary School: &nbsp;&nbsp;&nbsp;&nbsp;<input id='priBuilding' type='text' style='width: 200px;' name='primary_school_string' placeholder=''>
-	Additional Schools: <input id='addBuildings' type='text' style='width: 200px;' name='additional_schools_string' placeholder=''><br/>
-<input type='hidden' id='singleuser' name='singleuser' value='true' />
-<input type='hidden' id='updateusers' name='updateready' value='true' />
-	<input type='submit' value='Update' />
-		  </form>
-		  <script type='text/javascript'>
-		  	var priB = document.getElementById('priBuilding');
-		  	var addB = document.getElementById('addBuildings');
-		  	priB.value = '$userPrimaryBldg';
-		  	addB.value = '$userAdditionalBldgs';
-		  </script>";
 
-	if (isset($_REQUEST['updateready']) && $_REQUEST['updateready'] === 'true' &&
-		isset($_REQUEST['primary_school_string']) && 
-		isset($_REQUEST['additional_schools_string'])
-		)
-	{
-/*		$priSchool = $_REQUEST['primary_school_string'];
-		$addSchools = $_REQUEST['additional_schools_string'];
-		if(!preg_match('~[,[:blank:][:digit:]]+~', $priSchool) || !preg_match('~[,[:blank:][:digit:]]+~', $addSchools))
-		{
-			echo "<br/>The school codes entered must be comma-delimited numbers only.";
-			exit();
-		}
-		$user = (string) $api->uid;
-		$priSchoolUpdate = $api->assignPrimarySchoolBulk($priSchool, $user);
-		$additionalSchoolUpdates = $api->assignAdditionalSchoolsBulk($addSchools, $user);  */
-		if ($priSchoolUpdate)
-		{
-			echo "<br/>Assigning primary school $priSchool to user: $user. Response: <pre><code>";
-			print_r(json_encode($priSchoolUpdate, JSON_PRETTY_PRINT));
-			echo "</code></pre>";
-		}
-		if ($additionalSchoolUpdates)
-		{
-			echo "<br/>Assigning additional schools $addSchools to user: $user. Response: <pre><code>";
-			print_r(json_encode($additionalSchoolUpdates, JSON_PRETTY_PRINT));
-			echo "</code></pre>";
-		}
-	}
-	echo "<br/><br/><br/>User info for $email:<br/>";
-	$userReq = "users/$uidRequest";
-	$userData = $api->genericRequest($userReq);
-	echo '<br/>Response:<br/><pre><code>';
-	print_r($userData);
-	echo '</code></pre><br/>';
-	exit();
-}
-else
-{
-	echo '<h4>User update page</h4><br/><br/><form method="POST" action="" id="schoologyUpdateForm">
-		User email: <input type="text" id="email" name="email" placeholder="adam@example.com" />
-		<input type="hidden" id="singleuser" name="singleuser" value="true" />
-		<input type="submit" value="Continue" />
-	</form>';
-	echo "<pre><code>";
-	print_r($_REQUEST);
-	exit();
-}
-
-exit('Done');
-
-
-//***************
 echo "<br/>REquesting ....";
 $email = 'JWarner@swingtech.com';
 //$req = 'users/109529517/sections';
@@ -373,13 +236,21 @@ $sections = $myInfo->genericRequest($req);
 echo '<br/>Response:<br/><pre><code>';
 //print_r($sections);
 echo '</code></pre><br/>';
-$sch = "schools/15433069/buildings";
-echo "<br/>Fetching Schools info '$sch':<br/>";
-$schools = $myInfo->genericRequest($sch);
-echo '<br/>All schools for 15433069:<br/><pre><code>';
-/*print_r($schools);
-exit();    */
-foreach ($schools->building as $key => $building)
+/*	All Schools    */
+$schreq = 'schools';  // 'schools/{id}'
+echo "<br/>Fetching All Schools:<br/>";
+$schoolsResult = $myInfo->genericRequest($schreq);
+echo '<br/>All Schools:<br/><pre><code>';
+print_r($schoolsResult);
+echo "</code></pre>";
+/*	All buildings   */
+$campuses = "schools/15433069/buildings";
+echo "<br/>Fetching All Buldings/Campuses '$campuses':<br/>";
+$campusesResult = $myInfo->genericRequest($campuses);
+echo '<br/>All buildings for 15433069:<br/><pre><code>';
+print_r($campusesResult);
+echo '</code></pre><br/>';
+foreach ($campusesResult->building as $key => $building)
 {
 	$bldg_code = $building->building_code ? $building->building_code : 'none';
 	echo "<br/>".$building->title.", Internal id: ".$building->id.', Building code: '.$bldg_code;
