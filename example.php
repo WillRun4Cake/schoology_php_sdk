@@ -53,6 +53,103 @@ Class Request
 		}
 	}
 
+	public function assignAdditionalSchoolsBulk($schools, $users)
+	{
+		if (empty($schools))
+		{
+			throw new Exception('You must input a comma-delimited string of school id\'s.');
+		}
+		$usersArray = explode(',', $users);
+		$userChildObjs = array();
+		foreach ($usersArray as $user)
+		{
+			$tmpUser = new stdClass();
+			$tmpUser->id = $user;
+			$tmpUser->additional_buildings = $schools;
+			array_push($userChildObjs, $tmpUser);
+			unset($tmpUser);
+		}
+		$usersObj = new stdClass();
+		$usersObj->users = new stdClass();
+		$usersObj->users->user = $userChildObjs;
+		$url = 'users';
+/*		print_r(json_encode((array) $usersObj, JSON_PRETTY_PRINT));
+		return false;  */
+		$this->schoology = new SchoologyApi($this->_token_key, $this->_token_secret, '', '','', TRUE);
+		$response = $this->schoology->api($url, 'PUT', (array) $usersObj);
+		if ($response)
+		{
+			if (isset($response->result) && isset($response->http_code) && (int) $response->http_code > 199 && (int) $response->http_code < 300)
+			{
+				if (isset($response->result->user))
+				{
+					return true;
+				}
+			}
+			else
+			{
+				echo "<br/>Error with assigning additional buildings $schools to users: $users. Response: <br/><pre><code>";
+				print_r(json_encode($response, JSON_PRETTY_PRINT));
+				echo "</code></pre>";	
+				throw new Exception("Error. Failed to assign additional buildings.");
+			}
+		}
+		else
+		{
+			throw new Exception("Failed to bulk update schools. schools: $schools. users: $users");
+		}
+		return false;
+	}
+
+	public function assignPrimarySchoolsBulk($school=null, $users)
+	{
+		if (!is_numeric($school))
+		{
+			throw new Exception("You can only enter one primary school id. It must be numeric.");
+			return false;
+		}
+		$usersArray = explode(',', $users);
+		$userChildObjs = array();
+		foreach ($usersArray as $user)
+		{
+			$tmpUser = new stdClass();
+			$tmpUser->id = $user;
+			$tmpUser->building_id = $school;
+			array_push($userChildObjs, $tmpUser);
+			unset($tmpUser);
+		}
+		$usersObj = new stdClass();
+		$usersObj->users = new stdClass();
+		$usersObj->users->user = $userChildObjs;
+		$url = 'users';
+/*		print_r(json_encode((array) $usersObj, JSON_PRETTY_PRINT));
+		return false;  */
+		$this->schoology = new SchoologyApi($this->_token_key, $this->_token_secret, '', '','', TRUE);
+		$response = $this->schoology->api($url, 'PUT', (array) $usersObj);
+		if ($response)
+		{
+			if (isset($response->result) && isset($response->http_code) && (int) $response->http_code > 199 && (int) $response->http_code < 300)
+			{
+				if (isset($response->result->user))
+				{
+					return true;
+				}
+			}
+			else
+			{
+				echo "<br/>Error with assigning additional buildings $school to users: $users. Response: <br/><pre><code>";
+				print_r(json_encode($response, JSON_PRETTY_PRINT));
+				echo "</code></pre>";	
+				throw new Exception("Error. Failed to assign additional buildings.");
+			}
+		}
+		else
+		{
+			throw new Exception("Failed to bulk update schools. schools: $school. users: $users");
+		}
+		return false;
+	}
+
 	public function genericRequest ($url, $json=false)
 	{
 		$this->schoology = new SchoologyApi($this->_token_key, $this->_token_secret, '', '','', TRUE);
@@ -106,7 +203,6 @@ Class Request
 		return false;
 	}
 }
-
 echo "<br/>REquesting ....";
 $email = 'JWarner@swingtech.com';
 //$req = 'users/109529517/sections';
@@ -119,10 +215,48 @@ if (!$myInfo->uid || !is_numeric($myInfo->uid))
 {
 	exit("No valid user id");
 }
+if (isset($myInfo->uid) && $myInfo->uid)
+{
+	$uid = $myInfo->uid;
+}
+else
+{
+	exit("No valid user id");
+}
+$userReq = "users/$uid";
+echo "<br/>User info for $email:<br/>";
+$userInfo = $myInfo->genericRequest($userReq);
+echo '<br/>Response:<br/><pre><code>';
+print_r($userInfo);
+echo '</code></pre><br/>';
 $req = "users/".$myInfo->uid.'/sections';
 echo "<br/>Request: $req, Fetching user data:<br/>";
 $sections = $myInfo->genericRequest($req);
 echo '<br/>Response:<br/><pre><code>';
-print_r($sections);
+//print_r($sections);
 echo '</code></pre><br/>';
+$sch = "schools/15433069/buildings";
+echo "<br/>Fetching Schools info '$sch':<br/>";
+$schools = $myInfo->genericRequest($sch);
+echo '<br/>All schools for 15433069:<br/><pre><code>';
+/*print_r($schools);
+exit();    */
+foreach ($schools->building as $key => $building)
+{
+	$bldg_code = $building->building_code ? $building->building_code : 'none';
+	echo "<br/>".$building->title.", Internal id: ".$building->id.', Building code: '.$bldg_code;
+}
+echo "<br/><br/>Users Obj:<br/>";
+/*	Bulk update schools   */
+//$schools = '102709161,109029373,116302935';
+$schools = '102493601';
+$users = '10101,20202,30303';
+$users = (string) $myInfo->uid;
+$schoolUpdates = $myInfo->assignAdditionalSchoolsBulk($schools, $users);
+if ($schoolUpdates)
+{
+	echo "<br/>Assigning additional buildings $schools to users: $users. Response: <br/><pre><code>";
+	print_r(json_encode($schoolUpdates, JSON_PRETTY_PRINT));
+	echo "</code></pre>";
+}
 echo "Finished....";
