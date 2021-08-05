@@ -1,0 +1,4 @@
+Your current consumer key:
+3031d64a01bc262ee9504ed29c6e1eee0610be9c8
+Your current consumer secret:
+d9826b46c3f46d4aa3e83373b570ba59
