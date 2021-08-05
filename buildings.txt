@@ -1,0 +1,73 @@
+stdClass Object
+(
+    [building] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [id] => 102709161
+                    [title] => Development Knox
+                    [address1] => Unit 15797
+                    [address2] => 
+                    [city] => APO, AP 96271-5797
+                    [state] => KY
+                    [postal_code] => 
+                    [country] => US
+                    [website] => 
+                    [phone] => 9999
+                    [fax] => 
+                    [building_code] => 66492
+                    [picture_url] => https://asset-cdn.schoology.com/system/files/imagecache/profile_reg/sites/all/themes/schoology_theme/images/school-default.gif
+                )
+
+            [1] => stdClass Object
+                (
+                    [id] => 109029373
+                    [title] => Development Learning Communities
+                    [address1] => 5000 Seminary Road
+                    [address2] => 
+                    [city] => Alexandria
+                    [state] => VA
+                    [postal_code] => 
+                    [country] => US
+                    [website] => 
+                    [phone] => (703) 845-1010
+                    [fax] => 
+                    [building_code] => 
+                    [picture_url] => https://asset-cdn.schoology.com/system/files/imagecache/profile_reg/sites/all/themes/schoology_theme/images/school-default.gif
+                )
+
+            [2] => stdClass Object
+                (
+                    [id] => 102493601
+                    [title] => Development Virtual School
+                    [address1] => John Quick Rd
+                    [address2] => 
+                    [city] => Quantico
+                    [state] => VA
+                    [postal_code] => 
+                    [country] => US
+                    [website] => 
+                    [phone] => 703-730-0000
+                    [fax] => 
+                    [building_code] => 
+                    [picture_url] => https://asset-cdn.schoology.com/system/files/imagecache/profile_reg/sites/all/themes/schoology_theme/images/school-default.gif
+                )
+
+            [3] => stdClass Object
+                (
+                    [id] => 116302935
+                    [title] => Xavier's School for the Gifted
+                    [address1] => 1
+                    [address2] => 
+                    [city] => New York
+                    [state] => NY
+                    [postal_code] => 
+                    [country] => US
+                    [website] => 
+                    [phone] => 111-111-1111
+                    [fax] => 
+                    [building_code] => 
+                    [picture_url] => https://asset-cdn.schoology.com/system/files/imagecache/profile_reg/sites/all/themes/schoology_theme/images/school-default.gif
+                )
+
+        )
