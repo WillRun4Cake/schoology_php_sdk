@@ -207,17 +207,53 @@ class SchoologyApi
   /**
    * Make a schoology API Call
    */
-  public function api( $url , $method = 'GET' , $body = array() , $extra_headers = array() )
+  public function api( $url , $method = 'GET' , $body = array() , $extra_headers = array(), $verbose = false )
   {
+    /*  Internal Schoology limit of 200 results via the Schoology API.    */
+    $limit = 200;
+    $limit = $limit > 200 ? 200 : $limit;
     if(!in_array($method,$this->_api_supported_methods))
       throw new Exception('API method '.$method.' is not supported. Must be '.implode(',',$this->_api_supported_methods));
 
-    $api_url = $this->_api_base . '/' . ltrim($url,'/');
+    $api_url = $this->_api_base . '/' . ltrim($url,'/') . "?start_id=0&limit=$limit";
+
+    if ($verbose === true)
+      echo "<br/>Making API request: <br/><ul><li>$api_url</li></ul><br/>";
     
     // add the oauth headers
     $extra_headers[] = 'Authorization: '.$this->_makeOauthHeaders( $api_url , $method , $body );
 
     $response = $this->_curlRequest( $api_url , $method , $body , $extra_headers );
+
+    if (isset($response->result) && empty(reset($response->result)) && $verbose) {
+      echo "<br/>No more results.";
+    }
+
+/*  Follow links if result set exceeds pagination limit.  */
+/*    if (isset($response->result->links->next)) {
+      if ($verbose) {
+        echo "<br/>Next link beta: <br/><pre><code>";
+        print_r($response->result->links->next);
+        echo "</code></pre>";
+      }
+
+      $matches = array();
+      $found = preg_match('~start_id=([0-9]+)~i', $response->result->links->next, $matches);
+      if ($found && !empty($matches[1])) {
+        $nextid = $matches[1];
+
+        if ($verbose) {
+          echo "<br/>Found match: $nextid";
+        }
+
+        if (isset(reset($response->result)[0]->id)) {
+          $lastresultid = (int) reset($response->result)[0]->id;
+          if ($verbose) {
+            echo "<br/>Matches: $nextid vs. $lastresultid";
+          }
+        }
+      }
+    }   */
 
     // Something's gone wrong
     if($response->http_code > 400){
