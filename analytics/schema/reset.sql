@@ -1,6 +1,7 @@
 CREATE DATABASE IF NOT EXISTS `schoology`;
 CREATE USER IF NOT EXISTS `santa`@`localhost` IDENTIFIED BY 'hG8(*3te8@-)&et#uC8%3Et*7e';
 GRANT ALL PRIVILEGES ON `schoology`.* TO `santa`@`localhost`;
+GRANT FILE ON *.* TO `santa`@`localhost`;
 USE `schoology`;
 DROP TABLE IF EXISTS `data`;
 CREATE TABLE IF NOT EXISTS `data` (
