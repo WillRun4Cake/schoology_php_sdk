@@ -5,7 +5,7 @@
       google.charts.load('current', {'packages':['corechart']});
 
       var chart1 = {data: [
-          ['Role','Student','Teacher','SchoolStaff','SchoolCounselor','EducationalTechnologist','AboveSchoolLevelStaff','Teacher/Webmaster','SchoolAdministrator','LMSSystemAdministrator','InstructionalDesigner'],
+          ['Role','Student','Teacher','School Staff','School Counselor','Educational Technologist','Above School-Level Staff','Teacher/Webmaster','School Administrator','LMS System Administrator','Instructional Designer'],
           ['2017',50,80,40,2,10,11,6,4,3,10],
           ['2018',55,65,30,5,15,15,4,22,6,25],
           ['2019',62,45,20,11,20,17,12,3,9,20],
@@ -22,7 +22,7 @@
       };
 
       var chart2 = {data: [
-          ['Role','Student','Teacher','SchoolStaff','SchoolCounselor','EducationalTechnologist','AboveSchoolLevelStaff','Teacher/Webmaster','SchoolAdministrator','LMSSystemAdministrator','InstructionalDesigner'],
+          ['Role','Student','Teacher','School Staff','School Counselor','Educational Technologist','Above School-Level Staff','Teacher/Webmaster','School Administrator','LMS System Administrator','Instructional Designer'],
           ['2017',50,80,40,2,10,11,6,4,3,10],
           ['2018',55,65,30,5,15,15,4,22,6,25],
           ['2019',62,45,20,11,20,17,12,3,9,20],
