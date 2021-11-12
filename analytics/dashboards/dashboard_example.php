@@ -1,9 +1,12 @@
 <html>
   <head>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="assets/js/jquery-core/jquery-3.4.1.min.js"></script>
     <script type="text/javascript">
       google.charts.load('current', {'packages':['corechart']});
 
+/*    Data if not using Ajax.   */
+/*
       var chart1 = {data: [
           ['Role','Student','Teacher','School Staff','School Counselor','Educational Technologist','Above School-Level Staff','Teacher/Webmaster','School Administrator','LMS System Administrator','Instructional Designer'],
           ['2017',50,80,40,2,10,11,6,4,3,10],
@@ -55,16 +58,41 @@
         }
       };
 
+
       var charts = [];
       charts.push(chart1);
       charts.push(chart2);
       charts.push(chart3);
+*/
 
-      google.charts.setOnLoadCallback(chartLoad);
+/*    Ajax request for database query results.    */
+      google.charts.setOnLoadCallback(function () {
+        $.ajax({
+          url: "pdo.php",
+          contenttype: "application/x-www-form-urlencoded",
+          dataType: 'json',
+          type: 'GET',
+          success: function (response, status, xhr) {
+            console.log('Result: ',response);
+            google.charts.setOnLoadCallback(chartLoad(response));
+//            google.charts.setOnLoadCallback(drawChart(response));
+          },
+          error: function (xhr, status, error) {
+            console.warn("Result: " + status + " " + error + " " + xhr.status + " " + xhr.statusText);
+          }
+        });
+      });
+/*      google.charts.setOnLoadCallback(chartLoad);   */
 
-      function chartLoad () {
-        for (var i in charts) {
-          google.charts.setOnLoadCallback(drawChart(charts[i]));
+      function chartLoad (x) {
+        if (x === undefined) {
+          for (var i in charts) {
+            google.charts.setOnLoadCallback(drawChart(charts[i]));
+          }
+        } else {
+           for (var i in x) {
+            google.charts.setOnLoadCallback(drawChart(x[i]));
+          }
         }
       }
 

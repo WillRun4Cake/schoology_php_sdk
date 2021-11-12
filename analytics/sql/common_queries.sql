@@ -18,3 +18,12 @@ SELECT roleName as Role FROM data GROUP BY roleName LIMIT 20;
 
 # Students that used Schoology within Date Range, by School/Building
 SELECT COUNT(email) AS '#Users', roleName AS Role, userBuildingName as Building FROM data GROUP BY Building, Role, email HAVING Role = 'Student' LIMIT 20;
+
+# Student Usage by Item Type
+SELECT COUNT(itemType), itemType, roleName FROM data GROUP BY itemType HAVING itemType IN ('EXTERNAL_TOOL','PAGE','FILE','ASSIGNMENT','TEST/QUIZ','DISCUSSION', 'SCORM_PACKAGE','MEDIA_ALBUM','RESOURCE_TEST_QUIZ','RESOURCE_FOLDER') AND roleName = 'Student' LIMIT 100;
+
+# Top 60 Buildings/Schools by Overall Usage
+SELECT COUNT(id) AS 'Top 60 by Overall Usage', userBuildingName AS School FROM data GROUP BY userBuildingName ORDER BY COUNT(id) DESC LIMIT 50;
+
+# Usage by Device Type
+SELECT COUNT(deviceType) AS 'Count', deviceType AS 'Device' FROM data GROUP BY deviceType HAVING deviceType IN ('WEB','WEB_MOBILE','ANDROID','IOS') ORDER BY Count DESC LIMIT 100;
