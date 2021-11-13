@@ -60,14 +60,47 @@
     foreach($data as $row) {
       $chartArrays[$view]['data'][] = $row;
     }
-    $chartArrays[$view]['title'] = 'DoDEA Usage by Role';
-    $chartArrays[$view]['elementId'] = 'chart'.$i;
-    $chartArrays[$view]['chartType'] = 'pie';
-    $options = array(
-      'width' => 700,
-      'height' => 500
-    );
-    $chartArrays[$view]['options'] = $options;
+/*  Fetch chart meta data from database (if exists).    */
+    $query = 'SELECT * FROM `chart` WHERE `view` = :view LIMIT 1';
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':view', $view, PDO::PARAM_STR);
+    $stmt->execute();
+    if ($result = $stmt->fetch()) {
+      if (isset($result['title'])) { $chartArrays[$view]['title'] = $result['title']; }
+      if (isset($result['elementId']))
+      {
+        $chartArrays[$view]['elementId'] = $result['elementId'];
+      }
+      else
+      {
+        $chartArrays[$view]['elementId'] = 'chart'.$i;
+      }
+      if (isset($result['type'])) { $chartArrays[$view]['type'] = $result['type']; }
+      $options = array();
+      if (isset($result['width'])) {
+        if ($width = $result['width'])
+          $options['width'] = $width;
+      }
+      if (isset($result['height'])) {
+        if ($height = $result['height'])
+          $options['height'] = $height;
+      }
+      if (!empty($options))
+        $chartArrays[$view]['options'] = $options;
+    }
+    else
+    {
+      $chartArrays[$view]['title'] = 'Generic Title';
+      $chartArrays[$view]['elementId'] = 'chart'.$i;
+      $chartArrays[$view]['type'] = 'pie';
+      $options = array(
+        'width' => 700,
+        'height' => 500
+      );
+      if (!empty($options)) {
+        $chartArrays[$view]['options'] = $options;
+      }
+    }
     array_push($charts, $chartArrays[$view]);
     $i++;
   }
@@ -89,7 +122,7 @@
               ],
               'title' => 'DoDEA Roles by Zebra Quantity',
               'elementId' => 'chart1',
-              'chartType' => 'line',
+              'type' => 'line',
               'options' => [
                               'width'   => 700,
                               'height'  => 500
@@ -107,7 +140,7 @@
               ],
               'title' => 'DoDEA Hoops by Ferret Quantity',
               'elementId' => 'chart2',
-              'chartType' => 'line',
+              'type' => 'line',
               'options' => [
                               'width'   => 700,
                               'height'  => 500
@@ -125,7 +158,7 @@
               ],
               'title' => 'DoDEA Usage by Dolphin Role',
               'elementId' => 'chart3',
-              'chartType' => 'pie',
+              'type' => 'pie',
               'options' => [
                               'width'   => 700,
                               'height'  => 500
