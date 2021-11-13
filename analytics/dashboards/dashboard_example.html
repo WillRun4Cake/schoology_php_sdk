@@ -1,5 +1,7 @@
+<!DOCTYPE html>
 <html>
   <head>
+    <meta charset="UTF-8" />
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="assets/js/jquery-core/jquery-3.4.1.min.js"></script>
     <script type="text/javascript">
@@ -82,15 +84,16 @@
           }
         });
       });
-/*      google.charts.setOnLoadCallback(chartLoad);   */
 
       function chartLoad (x) {
         if (x === undefined) {
           for (var i in charts) {
+            createNewChart();
             google.charts.setOnLoadCallback(drawChart(charts[i]));
           }
         } else {
            for (var i in x) {
+            createNewChart();
             google.charts.setOnLoadCallback(drawChart(x[i]));
           }
         }
@@ -147,6 +150,17 @@
         }
         chartx.draw(data, options);
       }
+
+      function createNewChart() {
+        var existingCharts = $('.chart');
+        var existingCount = existingCharts.length;
+        console.log('existing chart count: ', existingCount);
+        var newChart = document.createElement('span');
+        newChart.id = 'chart'+(existingCount+1);
+        newChart.className = 'chart';
+        newChart.innerHTML ='happy llama';
+        $('.container')[0].appendChild(newChart);
+      }
   </script>
   <style>
     .container,h3 { max-width: 1900px; display: table; margin:  auto; }
@@ -158,9 +172,9 @@
 <body>
   <h3>Example Dashboard.</h3>
   <div class="container">
-      <span class="chart" id="chart1"></span>
+<!--      <span class="chart" id="chart1"></span>
       <span class="chart" id="chart2"></span>
-      <span class="chart" id="chart3"></span>
+      <span class="chart" id="chart3"></span> -->
   </div>
 </body>
 </html>
