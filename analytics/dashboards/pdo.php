@@ -12,7 +12,7 @@
  */
   header('Content-Type: application/json');
   $conn = new PDO('mysql:host=localhost;port=3306;dbname=schoology','santa','hG8(*3te8@-)&et#uC8%3Et*7e');
-  $resultLimit = 4;
+  $resultLimit = 100;
   $query = 'SHOW FULL TABLES IN schoology WHERE TABLE_TYPE LIKE "VIEW"';
   $stmt = $conn->prepare($query);
   $stmt->execute();
