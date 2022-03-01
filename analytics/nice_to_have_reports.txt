@@ -1,0 +1,5 @@
+x. YOY change in usage of specific LTI's (if we can narrow down a given subject or course to 1 LTI)
+x. Usage by LTI (# of students, % of students, which courses use which LTI's)
+x. YOY LTI usage. Which LTI's are we using more every year? Using less?
+x. Which LTI's are used the most.
+x. Cumulative amount of time spent in a course by student. (not sure how reliable time spent current is)

@@ -1,0 +1,18 @@
+1.  % of students that are using LTI's?
+2.  % of students that are using the Mathematics LTI's?
+3.  Number of students that have viewed the '%DVHS Online Learning Guide%' over the last 30 days?
+4.  Top 10 most used resources/materials?
+5.  Which courses are using LTI's the most? (Any LTI, don't need to know which one).
+6.  Average number of daily uses per student over the last 7 days. Just if a student used Schoology once per day, if 2x or 3x only count once.
+7.  YOY change in course/school overall usage. (what would be the criteria?)
+8.  Other YOY (Course materials/resources, Discussions, Media Album)?
+9.  Overall usage of Mathematics-based LTIs.
+10. Percentage/Qty of students accessing "PAC Student Orientation Course". (YOY?). Graph of % students accessing it semester-over-semester.
+11. What % of students accessed a given page in a given course.
+12. Over 30 days # of times each student has accessed a specific resource (or the course in general) by student.
+13. Which schools are using Schoology the most (based on student daily access).
+14. For Teachers, how many assessments are being CREATEd vs. how many Test/Quiz'es are being CREATEd? (YOY, MOM).
+15. Which Teachers have not used Schoology in the last 7 days?
+16. How often are Teachers updating content in Schoology?
+17. Organizing any of the above queries by region (anything YOY)?
+18. Number of students that accessed the "Schoology Orientation" course grouped by region (section name).
