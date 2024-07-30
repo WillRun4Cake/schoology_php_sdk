@@ -37,7 +37,7 @@ class SchoologyApi
       $this->_api_site_base = $site_base;
     }
     else {
-      $this->_api_site_base = defined('SCHOOLOGY_API_BASE') ? SCHOOLOGY_SITE_BASE : 'https://www.schoology.com';
+      $this->_api_site_base = defined('SCHOOLOGY_SITE_BASE') ? SCHOOLOGY_SITE_BASE : 'https://www.schoology.com';
     }
     $this->_consumer_key = $consumer_key;
     $this->_consumer_secret = $consumer_secret;
@@ -207,7 +207,7 @@ class SchoologyApi
   /**
    * Make a schoology API Call
    */
-  public function api( $url , $method = 'GET' , $body = array() , $extra_headers = array(), $verbose = false )
+  public function api( $url , $method = 'GET' , $body = array() , $extra_headers = array(), $verbose = false, $query_string = '' )
   {
     /*  Internal Schoology limit of 200 results via the Schoology API.    */
     $limit = 200;
@@ -215,7 +215,10 @@ class SchoologyApi
     if(!in_array($method,$this->_api_supported_methods))
       throw new Exception('API method '.$method.' is not supported. Must be '.implode(',',$this->_api_supported_methods));
 
-    $api_url = $this->_api_base . '/' . ltrim($url,'/') . "?start_id=0&limit=$limit";
+    if ($query_string)
+      $api_url = $this->_api_base . '/' . ltrim($url,'/') . "?".$query_string."&limit=$limit";
+    else
+      $api_url = $this->_api_base . '/' . ltrim($url,'/') . "?start_id=0&limit=$limit";
 
     if ($verbose === true)
       echo "<br/>Making API request: <br/><ul><li>$api_url</li></ul><br/>";
@@ -543,7 +546,92 @@ class SchoologyApi
     return $response;
   }
 
-}
+/**
+ * Inactivate the users provided.
+ * 
+ * @param string users A comma-delimited string of user id's to inactivate, e.g., 82938,203820,74027,203893
+ * @return array An array of the id's of all users which were deactivated.
+ * 
+**/
+  public function _inactivateUsers($userString, $keepEnrollments = true, $sendEmail = false)
+  {
+    /*
+        Only 50 users can be deleted at a time, so this method will have to chunk the provided users if > 50.
+    */
+    $userString= str_ireplace(' ','',$userString);
+    $userStringTest = preg_match('~^[0-9]{1,15}(,[0-9]{1,15}){0,}$~', $userString);
+    if (!$userStringTest)
+      throw new Exception("Error: Invalid argement passed to inactivateUsers(). A comma-delimited string of user id's must be passed to inactivateUsers().");
+
+    $usersArray = explode(',', $userString);
+
+    if (is_array($usersArray) && sizeof($usersArray) > 0) {
+      $imax = 500;
+      $ind = 0;
+      while (sizeof($usersArray) > 0) {
+        if ($ind >= $imax)
+          break;
+        $ind++;
+
+        $usersChunk = array_splice($usersArray, 0, 50);
+
+        $method = 'DELETE';
+        $url = 'users';
+        $query_string = implode(',', $usersChunk);
+
+        if(!in_array($method,$this->_api_supported_methods))
+          throw new Exception('API method '.$method.' is not supported. Must be '.implode(',',$this->_api_supported_methods));
+
+        $api_url = $this->_api_base . '/' . ltrim($url,'/') . "?uids=".$query_string;
+
+        $body = array();
+
+        if ($keepEnrollments)
+          $api_url .= '&' . 'option_keep_enrollments=1';
+
+        if (!$sendEmail)
+          $api_url .= '&' . 'email_notification=0';
+
+        // add the oauth headers
+        $extra_headers[] = 'Authorization: '.$this->_makeOauthHeaders( $api_url , $method , $body );
+
+        $response = $this->_curlRequest( $api_url , $method , $body , $extra_headers );
+
+
+//********************   Un-comment to debug API response    ************************
+/*
+        echo "<pre><code>Api response:<br/>";
+        print_r($response);
+        echo "</code></pre>";
+*/
+//***********************************************************************************
+
+        
+
+        // Return inactivated users
+        if (isset($response->result->user) && is_array($response->result->user)) {
+          $inactivatedUserArray = array();
+
+          foreach ($response->result->user as $uObj) {
+            if (isset($uObj->response_code) && $uObj->response_code === 200 && 
+                isset($uObj->id)) {
+              $inactivatedUserArray[$uObj->id] = $uObj->id;
+            }
+          }
+
+          if (sizeof($inactivatedUserArray) > 0) {
+            return $inactivatedUserArray;
+          }
+        }
+
+        return false; // return inactivated users in array
+      }  // End while
+    } // End if is array($usersArray)
+
+    return false;
+  }  // End _inactivateUsers
+
+}  // End class SchoologyApi
 
 
 
